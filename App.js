@@ -1,15 +1,22 @@
 import React,{useState,useEffect} from "react";
 import { View,StyleSheet,Image,Platform } from "react-native";
+import {VictoryPie,VictoryBar} from "victory-native";
 import MapView,{Marker} from "react-native-maps";
 import mapStyle from "./styles/mapStyle.json";
 import beok from "./styles/img.json";
 import Constants from "expo-constants";
 import * as Location from "expo-location";
 import { Icon } from "react-native-elements";
-import metroJson from "./styles/metro.json"
+import metroJson from "./styles/metro.json";
 import axios from "axios";
 import youbike from "./styles/youbike.json";
 
+
+const UBIKE_URL =
+  "https://data.ntpc.gov.tw/api/datasets/71CD1490-A2DF-4198-BEF1-318479775E8A/json/preview";
+
+
+const App = () => {
   const [region, setRegion] = React.useState({
     longitude: 121.543889,
     latitude: 25.0416667,
@@ -28,6 +35,7 @@ import youbike from "./styles/youbike.json";
   const [onCurrentLocation, setOnCurrentLocation] = useState(false);
   const [metro, setMetro] = useState(metroJson);
   const [ubike, setUbike] = useState([]);
+  const dataColor = ['tomato','yellow'];
 
   const onRegionChangeComplete = (rgn) => {
     if (
@@ -123,9 +131,15 @@ import youbike from "./styles/youbike.json";
             title={`${site.sna} ${site.sbi}/${site.tot}`}
             description={site.ar}
             >
-              <Image style={styles.marker} source={{url:beok[0].ubike}}
-              resizeMode="contain"
-              />
+             <VictoryPie
+             data={[{x:site.tot-site.sbi,y:100-(site.sbi/site.tot)*100},
+            {x:site.sbi,y:(site.sbi/site.tot)*100}
+            ]}
+            radius={15}
+            colorScale={dataColor}
+            labelRadius={10}
+            
+             />
               </Marker>
         ))}
       </MapView>
